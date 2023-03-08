@@ -31,6 +31,6 @@ function getDataOntem() {
     const dia = String(ontem.getDate()).padStart(2, '0');
     const dataFormat = `${ano}-${mes}-${dia}`;
     return dataFormat;
-  }
+}
 
 module.exports = { isString, isNull, capitaliza, getDataOntem };
