@@ -1,6 +1,6 @@
 # Melhorias
 
-A organização deste arquivo baseia-se na ideia de apresentar subtítulos com o tópicos que está sendo apontado na sugestão e os arquivos citados estão distribuídos em itens, com links para acessá-los diretamente caso seja necessária sua consulta.
+A organização deste arquivo baseia-se na ideia de apresentar subtítulos com o tópico que está sendo apontado na sugestão e os arquivos citados estão distribuídos em itens, com links para acessá-los diretamente caso seja necessária sua consulta.
 
 ## Vulnerabilidades e Problemas de Segurança
 
