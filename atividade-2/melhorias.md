@@ -21,13 +21,13 @@ Em uma primeira análise, é possível notar alguns arquivos semelhantes, como `
 
 ## Comentários e Legibilidade
 
-### Arquivo [gravacao_continuous.test.ts](https://github.com/GuilhermeSGodoy/villainbnb/blob/main/atividade-2/__tests__/gravacao_continuous.test.ts)
+### Arquivo gravacao_continuous.test.ts
 
 Os nomes pelos quais os testes são referidos parecem pouco intuitivos, apesar de claramente seguirem um padrão. Por exemplo, enquanto em `'Recover camera dia'` é possível interpretar que está buscando uma câmera referente a um determinado dia, em `Recover camera` isso não fica tão claro, visto que não é possível compreender qual é a câmera que está sendo buscada. Sendo assim, seria interessante a inclusão de comentários breves que deem alguns detalhes sobre a operação. No geral, alguns comentários poderiam ser adicionados para melhorar a compreensão de alguns trechos do códigos.
 
 ## Tratamento de Erros
 
-### Arquivo [app.ts](https://github.com/GuilhermeSGodoy/villainbnb/blob/main/atividade-2/src/app.ts)
+### Arquivo app.ts
 
 Este arquivo, assim como muitos outros, não apresenta nenhuma forma de tratamento de erros, de forma que possíveis entradas ou requisições inválidas prejudicam a execução da aplicação. Sendo assim, uma forma de evitar que isto aconteça seria adicionando um tratamento de erro como o seguinte:
 
@@ -46,7 +46,7 @@ app.use(function errorHandler(err: Error, req: express.Request, res: express.Res
 
 ## Validação de Dados
 
-### Arquivo [validator.js](https://github.com/GuilhermeSGodoy/villainbnb/blob/main/atividade-2/src/utils/validator.ts)
+### Arquivo validator.js
 
 Neste caso, pode ser interessante criar algumas validações adicionais para os parâmetros que estão sendo requisitados de `FIELDS`. Por exemplo, a função `createEvent()` poderia se aproveitar de outros métodos do `express-validator`:
 
@@ -67,7 +67,7 @@ export function createEvent() {
 
 ## Refatoramento de Trechos do Código
 
-### Arquivo [validator.js](https://github.com/GuilhermeSGodoy/villainbnb/blob/main/atividade-2/src/utils/validator.ts)
+### Arquivo validator.js
 
 A função `createEventObject()`, por exemplo, está criando o novo objeto apenas mediante uma cópia dos valores de req.body. Uma forma de deixá-la mais limpa seria:
 
@@ -81,7 +81,7 @@ export function createEventObject(req: any) {
 
 ## Modularização
 
-### Arquivo [MongoEvents.ts](https://github.com/GuilhermeSGodoy/villainbnb/blob/main/atividade-2/src/utils/MongoEvent.ts)
+### Arquivo MongoEvents.ts
 
 Neste arquivo, podemos verificar que há um trecho que é repetida três vezes, nas funções `queryEvents`, `queryEventsByID` e `countEvents`:
 
@@ -146,16 +146,3 @@ async queryEvents(query: any, projection: any, skip: number, limit: number, dbNa
   return this.loadPipeline(dbName, collectionName, pipeline);
 }
 ```
-
-
-(SERÁ QUE VAI USAR ISSO AINDA?)
-botando um lançamento de erro um pouco mais sofisticado:
-export function validateChain(req: any) {
-  const errors = validationResult(req)
-  if (errors.isEmpty()) return true
-
-  const [error] = errors.array({ onlyFirstError: true });
-  const message = `Validation error: ${error.param} ${error.msg}`;
-  const status = 400; // Bad Request
-  throw { message, status };
-}
