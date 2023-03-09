@@ -1,5 +1,3 @@
-// depois organiza pelo numero
-
 function baseAtualizaOk(res, base) {
     return res.status(200).json({ base, msg: 'Base atualizada com sucesso.' });
 }
