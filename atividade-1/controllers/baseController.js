@@ -1,8 +1,10 @@
+// Importações para o funcionamento do código: infelizmente não consegui encontrar uma maneira de importar tudo em um outro arquivo e trazer apenas um objeto deste outro arquivo para usá-lo (tive alguns problemas quando tentei isso)
 const axios = require('axios');
 
 const BaseModel = require('../models/Base');
 const { capitaliza, isNull, getDataOntem } = require('../utils/common');
 const { validaCreate, validaUpdate } = require('../utils/validator');
+const { baseAtualizaOk, baseRecuperaOk, aluguelOk, baseCria, deleteNoContent, badRequest, badRequestTitulo, senhaBadRequest, disponivelBadRequest, baseNotFound, basesNotFound, filtroNotFound, serverError } = require('../utils/status');
 
 const baseController = {
 
@@ -23,7 +25,7 @@ const baseController = {
             const erros = await validaCreate(base);
 
             if (erros.length > 0) {
-                res.status(400).json({ erros });
+                badRequest(res, erros);
             } else {
                 // Por fim, cria a base totalmente validada
                 base.titulo = capitaliza(base.titulo);
@@ -32,15 +34,15 @@ const baseController = {
                 base.tecnologias = base.tecnologias.map(tecnologia => capitaliza(tecnologia));
 
                 const baseCriada = await BaseModel.create(base);
-                res.status(201).json({ baseCriada, msg: 'Base adicionada com sucesso.' });
+                baseCria(res, baseCriada);
             } 
         } catch (error) {
+            // Tratamento do título na criação, que é essencial que seja obrigatório já que é a principal informação de identificação da base.
             if (error.name === 'ValidationError' && error.errors.titulo) {
-                res.status(400).json({ msg: 'O campo [Titulo] é obrigatório.' });
-                return;
+                return badRequestTitulo(res);
             }
           
-            res.status(500).json({ msg: 'Erro interno no servidor.' });
+            serverError(res);
         }
 
     },
@@ -48,17 +50,16 @@ const baseController = {
     getAll: async (req, res) => {
 
         try {
-            const bases = await BaseModel.find().select('-_id titulo cidade disponivel');
+            const bases = await BaseModel.find().select('_id titulo cidade disponivel');
             
             if (!bases.length) {
-                res.status(404).json({ msg: 'Não há bases cadastradas no sistema.' });
-                return;
+                return basesNotFound(res);
             }
 
-            res.status(200).json({ bases, msg: 'Bases recuperadas com sucesso.' });
+            baseRecuperaOk(res, bases);
         } catch (error) {
             console.log(error);
-            res.status(500).json({ msg: 'Erro interno no servidor.' });
+            serverError(res);
         }
 
     },
@@ -67,17 +68,16 @@ const baseController = {
 
         try {
             const id = req.params.id;
-            const base = await BaseModel.findById(id).select('-_id titulo cidade disponivel');
+            const base = await BaseModel.findById(id).select('_id titulo cidade disponivel');
 
-            if(!base) {
-                res.status(404).json({ msg: 'Base não encontrada.' });
-                return;
+            if (!base) {          
+                return baseNotFound(res);
             }
 
-            res.status(200).json({ base, msg: 'Base recuperada com sucesso.' });
+            baseRecuperaOk(res, base);
         } catch (error) {
             console.log(error);
-            res.status(500).json({ msg: 'Erro interno no servidor.' });
+            serverError(res);
         }
 
     },
@@ -88,16 +88,15 @@ const baseController = {
             const id = req.params.id;
             let base = await BaseModel.findById(id);
 
-            if (!base) {
-                res.status(404).json({ msg: 'Base não encontrada.' });
-                return;
+            if (!base) {          
+                return baseNotFound(res);
             }
 
-            base = await BaseModel.findByIdAndDelete(id);
-            res.status(204).send();
+            await BaseModel.findByIdAndDelete(id);
+            deleteNoContent(res);
         } catch (error) {
             console.log(error);
-            res.status(500).json({ msg: 'Erro interno no servidor.' });
+            serverError(res);
         }
     },
 
@@ -126,15 +125,13 @@ const baseController = {
             const bases = await BaseModel.find(filtro).select('_id titulo cidade tecnologias disponivel');
 
             if (!bases.length) {
-                res.status(404).json({ msg: 'Não foram encontradas bases correspondentes ao filtro desejado.' });
-                return;
+                return filtroNotFound(res);
             }
 
-            const basesFiltradas = await BaseModel.create(bases);
-            res.status(201).json({ basesFiltradas, msg: 'Base(s) recuperada(s) com sucesso.' });
+            baseRecuperaOk(res, bases)
         } catch (err) {
             console.error(err);
-            res.status(500).json({ msg: 'Erro interno no servidor.' });
+            serverError(res);
         }
     },
     
@@ -156,9 +153,9 @@ const baseController = {
             const erros = await validaUpdate(base);
 
             if (erros.length > 0) {
-                res.status(400).json({ erros });
+                badRequest(res, erros);
             } else {
-                // Caso em que está atualizando o nome da base também
+                // Caso em que está atualizando o nome da base também, para o novo nome atualizado
                 if (!isNull(base.titulo)) {
                     base.titulo = capitaliza(base.titulo);
                 }
@@ -166,18 +163,17 @@ const baseController = {
                 base.cidade = capitaliza(base.cidade);
                 base.tecnologias = base.tecnologias.map(tecnologia => capitaliza(tecnologia));
 
-                const baseAntiga = await BaseModel.findByIdAndUpdate(id, base);
+                const baseAtualizada = await BaseModel.findByIdAndUpdate(id, base);
 
-                if (!baseAntiga) {
-                    res.status(404).json({ msg: 'Base não encontrada.' });
-                    return;
+                if (!base) {          
+                    return baseNotFound(res);
                 }
 
-                res.status(200).json({ base, msg: 'Base atualizada com sucesso.' });
+                baseAtualizaOk(res, baseAtualizada);
             }        
         } catch (error) {
             console.log(error);
-            res.status(500).json({ msg: 'Erro interno no servidor.' });
+            serverError(res);
         }
 
     },
@@ -187,42 +183,36 @@ const baseController = {
         try {
             const id = req.params.id;
             const { titulo, fachada, senha } = req.body;
-            let baseAlugada = await BaseModel.findById(id);
+            let base = await BaseModel.findById(id);
 
-            if (!baseAlugada) {
-                res.status(404).json({ msg: 'Base não encontrada.' });
-                return;
+            if (!base) {          
+                return baseNotFound(res);
             }
 
-            if (!baseAlugada.disponivel) {
-                res.status(400).json({ msg: 'Base não disponível para aluguel.' });
-                return;
+            if (!base.disponivel) {
+                return disponivelBadRequest(res);
             }
 
-            if (baseAlugada.senha != senha) {
-                res.status(400).json({ msg: 'A senha de acesso à base está incorreta.' });
-                return;
+            if (base.senha != senha) {
+                return senhaBadRequest(res);
             }
 
-            // Marca a base como alugada
-            disponivel = false;
-
-            const base = {
+            const baseAlugada = {
                 titulo,
                 fachada,
                 senha,
-                disponivel,
+                disponivel: false,
             };
 
-            base.titulo = capitaliza(base.titulo);
-            base.fachada = capitaliza(base.fachada);
+            baseAlugada.titulo = capitaliza(base.titulo);
+            baseAlugada.fachada = capitaliza(base.fachada);
 
-            baseAlugada = await BaseModel.findByIdAndUpdate(id, base);
+            await BaseModel.findByIdAndUpdate(id, baseAlugada);
 
-            res.status(200).json({ base, msg: 'Base alugada com sucesso.' });
+            aluguelOk(res, baseAlugada);
         } catch (error) {
             console.log(error);
-            res.status(500).json({ msg: 'Erro interno no servidor.' });
+            serverError(res);
         }
     },
 
@@ -232,13 +222,18 @@ const baseController = {
             const id = req.params.id;
             const base = await BaseModel.findById(id);
 
-            if (!base) {
-                res.status(404).json({ msg: 'Base não encontrada.' });
-                return;
+            if (!base) {          
+                return baseNotFound(res);
             }
 
             // Parâmetros necessários para a requisição à weatherapi
             let cidade = base.cidade;
+
+            // Tratamento do caso da cidade 'Nova York', especificando-a como 'New York' para evitar conflitos com a cidade de mesmo nome localizada no Maranhão
+            if (cidade === 'Nova York') {
+                cidade = 'New York';
+            }
+
             const chave = '62be5618221c447289f11541230803';
             const dataOntem = getDataOntem();
             const url = `http://api.weatherapi.com/v1/history.json?key=${chave}&q=${cidade}&dt=${dataOntem}`;
@@ -248,6 +243,7 @@ const baseController = {
                     const temperatura = response.data.forecast.forecastday[0].day.avgtemp_c;
                     base.temperatura = temperatura;
 
+                    // Nota: como os status dos casos a seguir são bastante específicos para suas situações, não foram criados funções auxiliares no arquivo status
                     base.save()
                         .then(() => {
                             res.status(200).json({ base, msg: `Base atualizada com o valor da temperatura média do dia ${dataOntem} em ${base.cidade}.` });
@@ -263,7 +259,7 @@ const baseController = {
                 });
         } catch (error) {
             console.log(error);
-            res.status(500).json({ msg: 'Erro interno no servidor.' });
+            serverError(res);
         }
     }
 };
