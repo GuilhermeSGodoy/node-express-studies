@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "outDir": "build",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
+    "noUnusedLocals": true
+  },
+  "include": ["src/**/*.ts", "src/index.js"],
+  "exclude": ["__tests__", "src/**/__mocks__"]
+}
