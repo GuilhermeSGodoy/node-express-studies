@@ -23,7 +23,7 @@ Em uma primeira análise, é possível notar alguns arquivos semelhantes, como `
 
 ### Arquivo [gravacao_continuous.test.ts](https://github.com/GuilhermeSGodoy/villainbnb/blob/main/atividade-2/__tests__/gravacao_continuous.test.ts)
 
-Os nomes pelos quais os testes são referidos parecem pouco intuitivos, apesar de claramente seguirem um padrão. Por exemplo, enquanto em `'Recover camera dia'` é possível interpretar que está buscando uma câmera referente a um determinado dia, em `Recover camera` isso não fica tão claro, visto que não é possível compreender qual é a câmera que está sendo buscada. Sendo assim, seria interessante a inclusão de comentários breves que deem alguns detalhes sobre a operação.
+Os nomes pelos quais os testes são referidos parecem pouco intuitivos, apesar de claramente seguirem um padrão. Por exemplo, enquanto em `'Recover camera dia'` é possível interpretar que está buscando uma câmera referente a um determinado dia, em `Recover camera` isso não fica tão claro, visto que não é possível compreender qual é a câmera que está sendo buscada. Sendo assim, seria interessante a inclusão de comentários breves que deem alguns detalhes sobre a operação. No geral, alguns comentários poderiam ser adicionados para melhorar a compreensão de alguns trechos do códigos.
 
 ## Tratamento de Erros
 
