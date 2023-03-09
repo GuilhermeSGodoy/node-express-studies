@@ -154,3 +154,7 @@ async queryEvents(query: any, projection: any, skip: number, limit: number, dbNa
   return this.loadPipeline(dbName, collectionName, pipeline);
 }
 ```
+
+## Conclusão
+
+Desta forma, encerra-se este relatório de sugestão de melhorias. Com a análise do código apresentado, foi possível avaliar trechos que claramente podiam ser melhorados, como o que foi apontado no tópico Modularização, além de tornar-se evidente que uma análise cuidadosa de um código extenso e complexo leva bastante tempo, não apenas para a execução de testes que possibilitem a compreensão de suas funcionalides, como também a partir do entendimento das tecnologias aplicadas. Sendo assim, não é surpreendente imaginar que muitas outras mudanças podem ser propostas não apenas para o código desta atividade, como também para quaisquer outros que tenhamos a oportunidade de analisar.
