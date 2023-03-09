@@ -29,7 +29,7 @@ Os nomes pelos quais os testes são referidos parecem pouco intuitivos, apesar d
 
 ### Arquivo app.ts
 
-Este arquivo, assim como muitos outros, não apresenta nenhuma forma de tratamento de erros, de forma que possíveis entradas ou requisições inválidas prejudicam a execução da aplicação. Sendo assim, uma forma de evitar que isto aconteça seria adicionando um tratamento de erro como o seguinte:
+Este arquivo, assim como muitos outros, não apresenta uma forma clara de tratamento de erros, de forma que possíveis entradas ou requisições inválidas prejudicam a execução da aplicação. Sendo assim, uma forma de evitar que isto aconteça seria adicionando um tratamento de erro como o seguinte:
 
 ```
 app.use(function errorHandler(err: Error, req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -41,6 +41,14 @@ app.use(function errorHandler(err: Error, req: express.Request, res: express.Res
       stack: err.stack,
     },
   })
+})
+```
+
+Além disso, para fins de testes, também poderiam ser adicionadas mensagens que exibem o estado da aplicação, como para a inicialização do servidor:
+
+```
+app.listen(3000, function() {
+    console.log('Servidor inicializado com sucesso.');
 })
 ```
 
