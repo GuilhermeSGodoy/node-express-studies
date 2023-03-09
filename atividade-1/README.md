@@ -1,2 +1,3 @@
 # Atividade 1: Villainbnb
-Desenvolvimento do backend de um aplicativo estilo airbnb para cadastro e aluguel de bases para vilões.
+
+Esta atividade é direcionada ao desenvolvimento de uma REST API a partir de NodeJS e Express, utilizando um banco de dados MongoDB.
