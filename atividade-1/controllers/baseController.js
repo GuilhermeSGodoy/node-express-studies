@@ -243,7 +243,7 @@ const baseController = {
                     const temperatura = response.data.forecast.forecastday[0].day.avgtemp_c;
                     base.temperatura = temperatura;
 
-                    // Nota: como os status dos casos a seguir são bastante específicos para suas situações, não foram criadss funções auxiliares no arquivo status
+                    // Nota: como os status dos casos a seguir são bastante específicos para suas situações, não foram criadas funções auxiliares no arquivo status
                     base.save()
                         .then(() => {
                             res.status(200).json({ base, msg: `Base atualizada com o valor da temperatura média do dia ${dataOntem} em ${base.cidade}.` });
