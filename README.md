@@ -1,3 +1,3 @@
-# Estudos sobre REST API com NodeJS e Express
+# Atividade 1: Villainbnb
 
-O propósito deste repositório é armazenar duas atividades voltadas para o desenvolvimento e análise de REST API com NodeJS e Express, para fins de estudos.
+Esta atividade é direcionada ao desenvolvimento de uma REST API a partir de NodeJS e Express, utilizando um banco de dados MongoDB.
